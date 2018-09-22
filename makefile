@@ -54,6 +54,8 @@ EHOME=$(shell echo $$HOME | sed -e 's/\//\\\//g')
 	kubectl create namespace istio-system
 	helm template istio-1.0.0/install/kubernetes/helm/istio --name istio --namespace istio-system --set grafana.enabled=true --set servicegraph.enabled=true --set prometheus.enabled=true --set tracing.enabled=true > istio-1.0.0/istio.yaml
 	kubectl create -f istio-1.0.0/istio.yaml
+	kubectl label namespace default istio-injection=enabled
+	kubectl label namespace hello-t1 istio-injection=enabled
 
 .delete-istio-helm-template:
 	-kubectl delete -f istio-1.0.0/istio.yaml
@@ -148,3 +150,22 @@ endif
 	-kubectl -n istio-system patch svc prometheus -p '{"spec":{"type":"NodePort"}}'
 	-kubectl -n istio-system patch svc servicegraph -p '{"spec":{"type":"NodePort"}}'
 	-kubectl -n hello-t1 patch svc hello -p '{"spec":{"type":"NodePort"}}'
+
+.get-minikube-service-urls:
+	@echo 'kubernetes dashboard url'
+	@minikube -n kube-system service kubernetes-dashboard --url
+
+	@echo 'Jaeger url'
+	@minikube -n istio-system service jaeger-query --url
+
+	@echo 'Grafana url'
+	@minikube -n istio-system service grafana --url
+
+	@echo 'Prometheus url'
+	@minikube -n istio-system service prometheus --url
+
+	@echo 'Service graph url'
+	@echo $(shell minikube -n istio-system service servicegraph --url)/dotviz
+	
+	@echo 'Hello microservice url'
+	@minikube -n hello-t1 service hello --url
