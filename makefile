@@ -144,14 +144,14 @@ endif
 	-${RMD} ~/.minikube
 
 .open-services-node-ports-for-minikube:
-	-kubectl -n kube-system patch svc kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}'
-	-kubectl -n istio-system patch svc jaeger-query -p '{"spec":{"type":"NodePort"}}'
-	-kubectl -n istio-system patch svc grafana -p '{"spec":{"type":"NodePort"}}'
-	-kubectl -n istio-system patch svc prometheus -p '{"spec":{"type":"NodePort"}}'
-	-kubectl -n istio-system patch svc servicegraph -p '{"spec":{"type":"NodePort"}}'
-	-kubectl -n hello-t1 patch svc hello -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n kube-system patch svc kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n istio-system patch svc jaeger-query -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n istio-system patch svc grafana -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n istio-system patch svc prometheus -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n istio-system patch svc servicegraph -p '{"spec":{"type":"NodePort"}}'
+	@-kubectl -n hello-t1 patch svc hello -p '{"spec":{"type":"NodePort"}}'
 
-.get-minikube-service-urls:
+.get-minikube-service-urls: .open-services-node-ports-for-minikube
 	@echo 'kubernetes dashboard url'
 	@minikube -n kube-system service kubernetes-dashboard --url
 
